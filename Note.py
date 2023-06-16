@@ -27,40 +27,68 @@ def ShowNotes(filePath):
     """Пункт меню. Показать весь блокнот заметок"""
     myList = GetMyList(filePath)
     report = "Показ блокнота заметок:\n"
+    isDateFilter = input(f"Отфильтровать заметки по дате?\n(Enter - показать без фильтра, любая другая клавиша - настроить фильтр дат): ")
+    dateLeft = datetime.min
+    dateRight = datetime.max
+    if isDateFilter != "":
+        isDateLeft = input(f"Будет ли левая граница диапазона дат?\n(Enter - без левой границы, любая другая клавиша - настроить левую границу): ")
+        if isDateLeft != "":
+            dateLeftYear = input(f"Введите год левой границы: ")
+            dateLeftMonth = input(f"Введите месяц левой границы: ")
+            dateLeftDay = input(f"Введите день левой границы: ")
+            dateLeftHour = input(f"Введите час левой границы: ")
+            dateLeftMinute = input(f"Введите минуту левой границы: ")
+            dateLeftSecond = input(f"Введите секунду левой границы: ")
+            dateLeftMicroSecond = input(f"Введите микросекунду левой границы: ")
+            dateLeftString = f"{dateLeftYear}-{dateLeftMonth}-{dateLeftDay} {dateLeftHour}:{dateLeftMinute}:{dateLeftSecond}.{dateLeftMicroSecond}"
+            dateLeft = datetime.strptime(dateLeftString, "%Y-%m-%d %H:%M:%S.%f")
+        isDateRight = input(f"Будет ли правая граница диапазона дат?\n(Enter - без правой границы, любая другая клавиша - настроить правую границу): ")
+        if isDateRight != "":
+            dateRightYear = input(f"Введите год правой границы: ")
+            dateRightMonth = input(f"Введите месяц правой границы: ")
+            dateRightDay = input(f"Введите день правой границы: ")
+            dateRightHour = input(f"Введите час правой границы: ")
+            dateRightMinute = input(f"Введите минуту правой границы: ")
+            dateRightSecond = input(f"Введите секунду правой границы: ")
+            dateRightMicroSecond = input(f"Введите микросекунду правой границы: ")
+            dateRightString = f"{dateRightYear}-{dateRightMonth}-{dateRightDay} {dateRightHour}:{dateRightMinute}:{dateRightSecond}.{dateRightMicroSecond}"
+            dateRight = datetime.strptime(dateRightString, "%Y-%m-%d %H:%M:%S.%f")
     for myRow in myList:
-        report += myRow.replace(";", " ")
+        noteDateTime = datetime.strptime((";".join(myRow.split(";")[3:])).rstrip("\n"), "%Y-%m-%d %H:%M:%S.%f")
+        if dateLeft <= noteDateTime <= dateRight:
+            report += myRow
     tmp = report
     return report, tmp
 
 def AddNote(filePath):
     """Пункт меню. Добавить заметку"""
     print("Ввод новых данных.")
-    noteHeader = input("Введите заголовок заметки: ")
-    noteBody = input("Введите тело заметки: ")
     noteDate = datetime.now()
     noteId = f"ID{noteDate.year}{noteDate.month}{noteDate.day}{noteDate.hour}{noteDate.minute}{noteDate.second}{noteDate.microsecond}"
-    newNoteRow = f"{noteHeader};{noteBody};{noteId};{noteDate};\n"
+    noteHeader = input("Введите заголовок заметки: ")
+    noteBody = input("Введите тело заметки: ")
+    newNoteRow = f"{noteId};{noteHeader};{noteBody};{noteDate}\n"
     mySet = set(GetMyList(filePath))
     if newNoteRow in mySet:
-        report = f"Заметка '{noteHeader}. {noteBody}. {noteId} от {noteDate}' уже существует."
+        report = f"Заметка '{noteId}. {noteHeader}. {noteBody}. {noteDate}' уже существует."
         tmp = "Error"
         return report, tmp
     with open(filePath, "a+", encoding="utf-8") as myFile:
         myFile.write(newNoteRow)
-    report = f"Заметка '{noteHeader}. {noteBody}. {noteId} от {noteDate}' добавлена."
-    tmp = (noteHeader, noteBody, noteId, noteDate)
+    report = f"Заметка '{noteId}. {noteHeader}. {noteBody}. {noteDate}' добавлена."
+    tmp = (noteId, noteHeader, noteBody, noteDate)
     return report, tmp
 
 def FindNote(filePath):
     """Пункт меню. Найти заметку"""
-    findText = input("Введите текст для поиска заметки: ")
+    findText = input("Введите текст для поиска по идентификаторам: ")
     myList = GetMyList(filePath)
     report = f"Текст '{findText}' не найден."
     tmp = "Error"
     for rowNumber in range(0, len(myList)):
-        if findText in myList[rowNumber]:
+        if findText in myList[rowNumber].split(";")[0]:
             note = myList[rowNumber].replace(";", " ").replace("\n", "")
-            report = f"На строке № {rowNumber} найдена заметка: {note}"
+            report = f"На строке № {rowNumber} найдена заметка, идентификатор которой содержит поисковый текст: {note}"
             tmp = rowNumber
             return report, tmp
     return report, tmp
@@ -107,7 +135,7 @@ def EditNote(filePath):
     with open(filePath, "a+", encoding="utf-8") as myFile:
         myFile.write("".join(myList2))
     # 6. отчитаться
-    report = f"Заметка '{AddNoteTMP[0]}. {AddNoteTMP[1]}. {AddNoteTMP[2]} от {AddNoteTMP[3]}' в строке {DeleteNoteTMP} отредактирована."
+    report = f"Заметка '{AddNoteTMP[0]}. {AddNoteTMP[1]}. {AddNoteTMP[2]}. {AddNoteTMP[3]}' в строке {DeleteNoteTMP} отредактирована."
     tmp = DeleteNoteTMP
     return report, tmp
 
