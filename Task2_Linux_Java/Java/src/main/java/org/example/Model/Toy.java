@@ -1,6 +1,7 @@
 package org.example.Model;
 
 import org.example.Controller.Main;
+import org.example.Model.db.Database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,13 @@ public class Toy {
      */
     private double freq;
 
+    /**
+     * Игрушка
+     * @param id идентификатор игрушки
+     */
+    public Toy(Integer id) {
+        this(id, (Main.getRandomInt(0, 100))/100.0);
+    }
     /**
      * Игрушка
      * @param id идентификатор игрушки
@@ -46,4 +54,17 @@ public class Toy {
         return toys;
     }
 
+    public static List<Toy> tryParseList(List<String> contentList) {
+        var toys = new ArrayList<Toy>();
+        Toy toy;
+        for (var contentLine : contentList) {
+            String[] contentElement = contentLine.split(";");
+            toy = new Toy(
+                    Integer.parseInt(contentElement[0]),
+                    Double.parseDouble(contentElement[1])
+            );
+            toys.add(toy);
+        }
+        return toys;
+    }
 }

@@ -1,6 +1,7 @@
 package org.example.Model;
 
 import org.example.Controller.Main;
+import org.example.Model.db.Database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,21 @@ public class Customer {
     /**
      * Покупатель
      * @param id Идентификатор покупателя
+     */
+    public Customer(Integer id) {
+        this(id, false);
+    }
+    /**
+     * Покупатель
+     * @param id Идентификатор покупателя
+     * @param isPay Индикатор потребности купить (true/false)
+     */
+    public Customer(Integer id, Boolean isPay) {
+        this(id, isPay, new ArrayList<>());
+    }
+    /**
+     * Покупатель
+     * @param id Идентификатор покупателя
      * @param isPay Индикатор потребности купить (true/false)
      * @param cart Корзина покупателя
      */
@@ -52,6 +68,20 @@ public class Customer {
         List<Customer> customers = new ArrayList<>();
         for (int i = 0; i < customersCount; i++) {
             customers.add(db.getCustomers().get(Main.getRandomInt(customerIdMin, customerIdMax)));
+        }
+        return customers;
+    }
+
+    public static List<Customer> tryParseList(List<String> contentList) {
+        var customers = new ArrayList<Customer>();
+        Customer customer;
+        for (var contentLine : contentList) {
+            String[] contentElement = contentLine.split(";");
+            customer = new Customer(
+                    Integer.parseInt(contentElement[0]),
+                    Boolean.parseBoolean(contentElement[1])
+            );
+            customers.add(customer);
         }
         return customers;
     }

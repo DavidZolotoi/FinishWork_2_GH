@@ -1,7 +1,7 @@
 package org.example.Controller;
 
 import org.example.Model.Customer;
-import org.example.Model.Database;
+import org.example.Model.db.Database;
 import org.example.Model.Store;
 
 import java.util.List;
@@ -21,8 +21,11 @@ import java.util.Random;
 public class Main {
     public static void main(String[] args) {
 
+        // Опорный путь (от него отталкиваемся) - где лежит Main.java
+        String pathMain = "src\\main\\java\\org\\example\\Main.java";
+
         // Магазин
-        Store store = new Store();
+        Store store = new Store(1, pathMain);
 
         // Продавец пришел в магазин, всё перепроверил и инициировал открытие магазина
         // в db возвращается актуальные БД на сегодня
@@ -36,6 +39,7 @@ public class Main {
             // Покупатель намерен совершить покупку?
             if (!customer.getPay()) continue;
             // Покупатель собрал корзину
+            // МОЖЕТ БЫТЬ ИМЕЕТ СМЫСЛ СБОКУ КОРЗИНЫ ЗАСУНУТЬ В ТРАНЗАКТИОН ИЛИ СТОР
             customer.cartFillRandom(db);
             // ПОКУПАТЕЛЬ инициировал ПОКУПКУ, вместе с ПРОДАВЦОМ
             Transaction transaction = new Transaction(store, customer);

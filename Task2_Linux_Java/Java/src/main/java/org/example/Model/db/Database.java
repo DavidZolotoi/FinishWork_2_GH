@@ -1,4 +1,7 @@
-package org.example.Model;
+package org.example.Model.db;
+
+import org.example.Model.Customer;
+import org.example.Model.Toy;
 
 import java.util.List;
 
