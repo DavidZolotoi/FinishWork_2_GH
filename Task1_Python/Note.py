@@ -202,7 +202,7 @@ def GetActionFromMenu(menuDict, filePath):
 
 def main() -> None:
     """Точка входа"""
-    fileName = "Notebook.csv"                   # имя файла блокнота
+    fileName = "Notebook.csv"  # имя файла блокнота
     filePath = GetFilePath(fileName)            # формирование пути для блокнота (рядом с Note.py)
     CreateFile(filePath)                        # на всякий случай во избежание проблем - необязательно
     menuDict = GetMenuDictionary()              # создание меню
